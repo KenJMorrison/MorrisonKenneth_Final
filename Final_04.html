@@ -1,0 +1,174 @@
+<!doctype html>
+<html>
+<head>
+<title>MorrisonKenneth_Finals</title>
+<meta charset='utf-8'>
+<style>
+canvas{
+	border: 1px solid black;
+}
+</style>
+<script>
+	  var canvas;
+	  var context;
+	  var fireworks = [];
+	  var timer;
+	  var timerTwo;
+	  var isRed = true;
+	  var red = ["#ff3300", "#ff6600", "#ffff00", "#ff9933", "#ffffff"];
+	  var isBlue = false;
+	  var blue = ["#1a75ff", "#ffffff", "#4ddbff", "#000099", "#884dff"];
+	  var isGreen = false;
+	  var green = ["#ffffff", "#00ff00", "#ccff33", "#00ff99", "#248f24"];
+	  var possibleFireworks = ['triangle','square','circle'];
+	  function Firework(x, y) {
+		this.x = x;
+		this.y = y;
+		this.size = 50
+		this.dx = Math.random()*4-2;
+		this.dy = Math.random()*4-2;
+	//	this.color = color;
+		this.shape = possibleFireworks[Math.floor(Math.random()*possibleFireworks.length)];
+	  }
+	  
+      function init() {
+        canvas = document.getElementById('canvas');
+        context = canvas.getContext("2d");
+ 
+        window.addEventListener('resize', resizeCanvas, false);
+        window.addEventListener('orientationchange', resizeCanvas, false);
+		document.addEventListener('keydown', keyDownHandler, false);
+        resizeCanvas();
+		canvas.onclick = function(event){
+		handleClick(event.clientX, event.clientY);
+	};
+	//	makeFireworks();
+		timer = setInterval(resizeCanvas, 20);
+		setInterval(handleClick, 30);
+
+      }
+	  
+	/*  	 function makeFireworks(){
+	for(var i =0; i <30; i++){
+			fireworks.push(new Firework(x, y, color));
+		}
+	  }*/
+	  
+		function handleClick(x, y){
+	for(var i = 0; i < 10; i++){
+		fireworks.push(new Firework(x, y));
+	}
+}
+
+	    function keyDownHandler(e) {
+        if(e.keyCode == 49) {
+            red = true;
+        }
+        else if(e.keyCode == 50) {
+            blue = true;
+        }
+		else if(e.keyCode == 51) {
+            green = true;
+        }
+    }
+	  
+	  function drawCircle(f) {
+		 context.beginPath();
+		 context.arc(f.x, f.y, f.size, 0, degreesToRadians(360), true);
+		if (isRed = true){
+		 context.fillStyle = red[Math.floor(Math.random()*red.length)];
+		}else if(isBlue = true){
+		 context.fillStyle = blue[Math.floor(Math.random()*blue.length)];
+		}else if(isGreen = true){
+		 context.fillStyle = green[Math.floor(Math.random()*red.length)];
+		}	
+		 context.fill();
+	  }
+	  function drawSquare(f) {
+		context.beginPath();
+		 if (isRed = true){
+		 context.fillStyle = red[Math.floor(Math.random()*red.length)];
+		}else if(isBlue = true){
+		 context.fillStyle = blue[Math.floor(Math.random()*blue.length)];
+		}else if(isGreen = true){
+		 context.fillStyle = green[Math.floor(Math.random()*red.length)];
+		}	
+		context.fillRect(f.x, f.y, f.size, f.size);
+      }	 
+	  function drawTriangle(f) {
+		context.beginPath();
+		 if (isRed = true){
+		 context.fillStyle = red[Math.floor(Math.random()*red.length)];
+		}else if(isBlue = true){
+		 context.fillStyle = blue[Math.floor(Math.random()*blue.length)];
+		}else if(isGreen = true){
+		 context.fillStyle = green[Math.floor(Math.random()*red.length)];
+		}	
+		context.moveTo(f.x+f.size,f.y);
+		context.lineTo(f.x,f.y);
+		context.lineTo(f.x,f.y+f.size);
+	    context.closePath();
+        context.fill();
+	  }
+
+	  
+	  function drawText() {
+	  
+	  	var x = Math.random() * canvas.width;
+		var y = Math.random() * canvas.height;
+		var texts = ["BOOM!", "BANG!", "POP!", "BLAST!"];
+		var text = texts[Math.floor(Math.random()*texts.length)];
+		context.fillStyle = 'white';
+		context.font = 'bold 2em sans-serif';
+		context.textAlign = 'cwnter';
+		context.fillText(text, x, y);
+
+	}
+
+	
+function fillBackgroundColor(){
+	context.fillStyle = 'black';
+	context.fillRect(0,0,canvas.width, canvas.height);
+}
+
+	
+function resizeCanvas(){
+	canvas.width = window.innerWidth - 25;
+	canvas.height = window.innerHeight - 25;
+	fillBackgroundColor(); 
+	context.globalCompositOperation = 'source-over';
+	context.fillStyle = 'rgba(0, 0, 0, 0.3)';
+	context.fillRect(0, 0, canvas.width, canvas.height);
+	context.globalCompositOperation = 'lighter';
+	for(var i = 0; i < fireworks.length; i++){
+		var f = fireworks[i];
+		if (f.shape == 'square') {
+				drawSquare(f);
+		} else if (f.shape == 'circle') {
+				drawCircle(f);
+		} else if (f.shape == 'triangle') {
+				drawTriangle(f);
+		} 
+			if (f.x + f.dx > canvas.width || f.x + f.dx < 0)
+				f.dx = -f.dx;
+			if (f.y + f.dy > canvas.height || f.y + f.dy < 0)
+				f.dy = -f.dy;
+				f.x += f.dx;
+				f.y += f.dy;
+			if(f.size > 0) f.size--;
+		}
+		//drawText();	
+
+}
+
+
+
+	function degreesToRadians(degrees) {
+		return (degrees * Math.PI)/180;
+	}
+	window.onload = init;
+</script>
+</head>
+<body>
+<canvas id='canvas' width=640 height=480></canvas>
+</body>	  
