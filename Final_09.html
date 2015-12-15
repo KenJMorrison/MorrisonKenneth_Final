@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+<head>
+<title>MorrisonKenneth_Finals</title>
+<meta charset='utf-8'>
+<style>
+canvas{
+	border: 1px solid black;
+}
+</style>
+<script>
+	  var canvas;
+	  var context;
+	  var fireworks = [];
+	  var timer;
+	  var timerTwo;
+	  var isRed = false;
+	  var red = ["#ff3300", "#ff6600", "#ffff00", "#ff9933", "#ffffff"];
+	  var isBlue = true;
+	  var blue = ["#1a75ff", "#ffffff", "#4ddbff", "#000099", "#884dff"];
+	  var isGreen = false;
+	  var green = ["#ffffff", "#00ff00", "#ccff33", "#00ff99", "#248f24"];
+	  var possibleFireworks = ['triangle','square','circle'];
+	  function Firework(x, y) {
+		this.x = x;
+		this.y = y;
+		this.size = 100
+		this.dx = Math.random()*4-2;
+		this.dy = Math.random()*4-2;
+		this.shape = possibleFireworks[Math.floor(Math.random()*possibleFireworks.length)];
+	  }
+	  
+      function init() {
+        canvas = document.getElementById('canvas');
+        context = canvas.getContext("2d");
+        window.addEventListener('resize', resizeCanvas, false);
+        window.addEventListener('orientationchange', resizeCanvas, false);
+		document.addEventListener('keyup', keyUpHandler, false);
+        resizeCanvas();
+		canvas.onclick = function(event){
+		handleClick(event.clientX, event.clientY);
+	};
+		timer = setInterval(resizeCanvas, 20);
+		setInterval(handleClick, 30);
+
+      }
+
+		function handleClick(x, y){
+	for(var i = 0; i < 10; i++){
+		fireworks.push(new Firework(x, y));
+	}
+}
+
+function keyUpHandler(e) {
+        if(e.keyCode == 65) {
+            isRed = true;
+			isBlue = false;
+			isGreen = false;
+        }
+        else if(e.keyCode == 83) {
+			isBlue = true;
+			isRed = false;
+			isGreen = false;
+        }
+		else if(e.keyCode == 68) {
+			isGreen = true;
+			isRed = false;
+			isBlue = false;
+        }
+    }
+
+	  
+	  function drawCircle(f) {
+		 context.beginPath();
+		 context.arc(f.x, f.y, f.size, 0, Math.PI*2, true);
+	
+		 context.fill();
+	  }
+	  function drawSquare(f) {
+		context.beginPath();
+
+		context.fillRect(f.x, f.y, f.size, f.size);
+      }	 
+	  function drawTriangle(f) {
+		context.beginPath();
+
+		context.moveTo(f.x+f.size,f.y);
+		context.lineTo(f.x,f.y);
+		context.lineTo(f.x,f.y+f.size);
+	    context.closePath();
+        context.fill();
+	  }
+
+	  
+	  function drawText() {
+		context.fillStyle = 'white';
+		context.font = 'bold 2em sans-serif';
+		context.textAlign = 'right';
+		context.fillText('Click for firework', canvas.width-40, canvas.height-40);
+		context.fillText('A for Red', canvas.width-40, canvas.height-140);
+		context.fillText('S for Blue', canvas.width-40, canvas.height-110);
+		context.fillText('D for Green', canvas.width-40, canvas.height-80);
+	  }	
+	
+
+	
+function fillBackgroundColor(){
+	context.fillStyle = 'black';
+	context.fillRect(0,0,canvas.width, canvas.height);
+}
+
+	
+function resizeCanvas(){
+	canvas.width = window.innerWidth - 25;
+	canvas.height = window.innerHeight - 25;
+	fillBackgroundColor(); 
+	context.globalCompositeOperation = 'source-over';
+	context.fillStyle = 'rgba(0, 0, 0, 0.3)';
+	context.fillRect(0, 0, canvas.width, canvas.height);
+	context.globalCompositOperation = 'lighter';
+	for(var i = 0; i < fireworks.length; i++){
+		var f = fireworks[i];
+		if (isRed == true){
+		 context.fillStyle = red[Math.floor(Math.random()*red.length)];
+		}
+		if (isBlue == true){
+		
+		 context.fillStyle = blue[Math.floor(Math.random()*blue.length)];
+		}
+		if (isGreen == true){
+		 context.fillStyle = green[Math.floor(Math.random()*green.length)];
+		}	
+		if (f.shape == 'square') {
+				drawSquare(f);
+		} else if (f.shape == 'circle') {
+				drawCircle(f);
+		} else if (f.shape == 'triangle') {
+				drawTriangle(f);
+		} 
+			if (f.x + f.dx > canvas.width || f.x + f.dx < 0)
+				f.dx = -f.dx;
+			if (f.y + f.dy > canvas.height || f.y + f.dy < 0)
+				f.dy = -f.dy;
+				f.x += f.dx;
+				f.y += f.dy;
+			if(f.size > 0) f.size--;
+		}
+		drawText();	
+
+}
+
+
+
+	function degreesToRadians(degrees) {
+		return (degrees * Math.PI)/180;
+	}
+	window.onload = init;
+</script>
+</head>
+<body>
+<canvas id='canvas' width=640 height=480></canvas>
+</body>	  
